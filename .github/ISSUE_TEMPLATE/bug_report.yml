@@ -1,0 +1,46 @@
+name: Bug report
+description: Something doesn't work or sounds wrong
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting. Security issues go to SECURITY.md, not here.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Pick song "Slow Burn", preset Pad, Follow mode
+        2. Swipe down with right hand
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and OS
+      placeholder: Chrome 141 on macOS 26
+    validations:
+      required: true
+  - type: dropdown
+    id: tracking
+    attributes:
+      label: Tracking badge (top left)
+      options: ["GPU", "CPU TRACKING", "No camera", "Not sure"]
+  - type: textarea
+    id: debug
+    attributes:
+      label: Debug overlay numbers (press D)
+      description: fps, inference ms, gesture→trigger latency
+  - type: textarea
+    id: media
+    attributes:
+      label: Screen recording or console errors
+      description: A short clip helps a lot with gesture bugs.

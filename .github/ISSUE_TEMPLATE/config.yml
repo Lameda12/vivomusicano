@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and ideas
+    url: https://github.com/Lameda12/vivomusicano/discussions
+    about: Ask questions and share songs or performances
+  - name: Security vulnerability
+    url: https://github.com/Lameda12/vivomusicano/security/advisories/new
+    about: Report privately, please don't open a public issue
+  - name: App early access and business inquiries
+    url: https://alamedinsabit.me
+    about: Contact the maintainer
