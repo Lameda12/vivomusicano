@@ -1,8 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { PRESETS, type PresetName } from "@/lib/audio";
+import { APP_NAME } from "@/lib/brand";
 import { parseProgression, type Song } from "@/lib/songs";
+import { Wordmark } from "./Wordmark";
 
 export type Mode = "follow" | "auto";
 
@@ -53,10 +56,9 @@ export function TopBar(p: TopBarProps) {
   const song = p.songs.find((s) => s.id === p.songId);
   return (
     <header className="absolute inset-x-0 top-0 z-20 flex flex-wrap items-center gap-3 px-4 py-4 sm:px-[8vw]">
-      <div className="mr-auto flex items-baseline gap-3">
-        <span className="font-display text-3xl tracking-wide text-white">
-          VIVOMUSICANO<span className="text-accent">.</span>
-        </span>
+      <div className="mr-auto flex items-center gap-3">
+        <Image src="/logo.png" alt={APP_NAME} width={32} height={32} priority className="sm:hidden" />
+        <Wordmark className="hidden text-2xl sm:inline lg:text-3xl" />
         {p.delegate && <span className="font-mono text-[10px] tracking-widest text-white/40">{p.delegate}</span>}
       </div>
 
@@ -130,7 +132,7 @@ function Meter({ label, value, readout, live }: { label: string; value: number; 
 export function Meters({ volume, filter, live }: { volume: number; filter: number; live: boolean }) {
   const hz = 180 * Math.pow(50, filter);
   return (
-    <div className="absolute right-4 top-[18vh] z-10 flex gap-5 sm:right-[4vw]">
+    <div className="absolute right-4 top-44 z-10 lg:top-[18vh] flex gap-5 sm:right-[4vw]">
       <Meter label="VOL" value={volume} readout={`${Math.round(volume * 100)}`} live={live} />
       <Meter label="FILT" value={filter} readout={hz >= 1000 ? `${(hz / 1000).toFixed(1)}k` : `${Math.round(hz)}`} live={live} />
     </div>

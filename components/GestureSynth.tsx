@@ -6,6 +6,7 @@ import { LeftHandExpression, RightHandGestures, type RightHandState } from "@/li
 import { loadCustomSongs, PRESET_SONGS, saveCustomSongs, type Song } from "@/lib/songs";
 import { ChordDisplay, Stage, type HandFrame, type VisionStatus } from "./Stage";
 import { Meters, SongEditor, TopBar, type Mode } from "./Controls";
+import { Wordmark } from "./Wordmark";
 
 type Stats = {
   inferenceMs: number;
@@ -275,20 +276,20 @@ export default function GestureSynth() {
       )}
 
       {vision.state === "loading" && (
-        <div className="absolute left-1/2 top-20 z-30 -translate-x-1/2 font-mono text-xs tracking-widest text-white/70">
+        <div className="absolute left-1/2 top-40 z-30 lg:top-20 -translate-x-1/2 font-mono text-xs tracking-widest text-white/70">
           {vision.message.toUpperCase()}
         </div>
       )}
       {vision.state === "error" && (
-        <div role="alert" className="absolute left-1/2 top-20 z-30 w-[min(36rem,calc(100%-2rem))] -translate-x-1/2 border-l-4 border-accent bg-black/80 px-4 py-3 font-mono text-xs leading-5 text-white">
+        <div role="alert" className="absolute left-1/2 top-40 z-30 lg:top-20 w-[min(36rem,calc(100%-2rem))] -translate-x-1/2 border-l-4 border-accent bg-black/80 px-4 py-3 font-mono text-xs leading-5 text-white">
           {vision.message}
         </div>
       )}
 
       {!started && (
         <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-stage/85 px-4 text-center backdrop-blur-sm">
-          <h1 className="font-display text-[clamp(2.75rem,10vw,8rem)] leading-none">
-            VIVOMUSICANO<span className="text-accent">.</span>
+          <h1 className="leading-none">
+            <Wordmark className="text-[clamp(2.75rem,10vw,8rem)]" />
           </h1>
           <p className="mt-4 max-w-md font-mono text-xs leading-6 tracking-wider text-white/60">
             A GESTURE SYNTH THAT PLAYS ALONG. YOUR RIGHT HAND MOVES THE SONG FORWARD, YOUR LEFT HAND SHAPES THE SOUND.

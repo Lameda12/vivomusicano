@@ -266,7 +266,7 @@ export function ChordDisplay({ chords, index, flashKey, mode, beat, held }: Chor
   return (
     <>
       <div key={flashKey} className="pointer-events-none absolute inset-0 animate-flash" />
-      <div className="pointer-events-none absolute inset-x-0 top-[14vh] flex flex-col items-center px-4 sm:items-start sm:pl-[8vw]">
+      <div className="pointer-events-none absolute inset-x-0 top-44 flex lg:top-[14vh] flex-col items-center px-4 sm:items-start sm:pl-[8vw]">
         <div className="font-mono text-xs tracking-[0.35em] text-white/50">
           NOW · {index + 1}/{chords.length}
           {mode === "auto" && held && <span className="ml-3 text-accent">HOLD</span>}
