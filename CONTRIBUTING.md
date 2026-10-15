@@ -1,6 +1,6 @@
-# Contributing to VIVO
+# Contributing to Vivomusicano
 
-Thanks for wanting to help. VIVO is open to contributions of every size: a new chord progression, a better swipe threshold, a new synth preset, docs, translations, or bug reports.
+Thanks for wanting to help. Vivomusicano is open to contributions of every size: a new chord progression, a better swipe threshold, a new synth preset, docs, translations, or bug reports.
 
 ## Quick start
 
@@ -55,7 +55,7 @@ npm run build
 
 ## Licensing of contributions
 
-By submitting a contribution, you agree that it is licensed under the project's [MIT License](LICENSE) and that you have the right to submit it. MIT allows the maintainer and anyone else to use the code in other products, including the planned VIVO app and its paid tier (see [ROADMAP.md](ROADMAP.md)). Contributors are credited in release notes.
+By submitting a contribution, you agree that it is licensed under the project's [MIT License](LICENSE) and that you have the right to submit it. MIT allows the maintainer and anyone else to use the code in other products, including the planned Vivomusicano app and its paid tier (see [ROADMAP.md](ROADMAP.md)). Contributors are credited in release notes.
 
 ## Conduct
 

@@ -6,7 +6,7 @@ Please read this before you play.
 
 ## Photosensitivity
 
-VIVO shows bright flashes when a chord changes. A small share of people have seizures triggered by flashing lights or patterns, sometimes with no prior history. If you or anyone in your family has epilepsy or has had a seizure, talk to a doctor before using VIVO. **Stop right away** if you feel dizzy, have blurred vision, eye or muscle twitches, or feel disoriented.
+Vivomusicano shows bright flashes when a chord changes. A small share of people have seizures triggered by flashing lights or patterns, sometimes with no prior history. If you or anyone in your family has epilepsy or has had a seizure, talk to a doctor before using Vivomusicano. **Stop right away** if you feel dizzy, have blurred vision, eye or muscle twitches, or feel disoriented.
 
 ## Hearing
 

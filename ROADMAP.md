@@ -1,6 +1,6 @@
 # Roadmap
 
-VIVO turns your hands into a band that follows a singer. This is where it's heading. Dates are targets, not promises.
+Vivomusicano turns your hands into a band that follows a singer. This is where it's heading. Dates are targets, not promises.
 
 ## Now: open-source web app (free forever)
 
@@ -16,17 +16,17 @@ Everything in this repository stays free and MIT-licensed:
 
 - [ ] Unit tests for the chord parser and gesture state machines
 - [ ] More presets (strings, organ, choir, 808 bass)
-- [ ] MIDI out over Web MIDI, so VIVO can drive any DAW or hardware synth
+- [ ] MIDI out over Web MIDI, so Vivomusicano can drive any DAW or hardware synth
 - [ ] Shareable song links (progression encoded in the URL, no server)
 - [ ] Gesture calibration screen (per-user swipe speed and pinch range)
 - [ ] Keyboard and screen-reader accessibility pass
 - [ ] Translations of the UI
 
-## Coming soon: VIVO app
+## Coming soon: Vivomusicano app
 
 Native apps for **iOS, Android, and desktop** are in development, with lower latency and offline use. Want early access? Sign up through [alamedinsabit.me](https://alamedinsabit.me) and watch this repo's releases.
 
-## Planned: VIVO Pro (freemium)
+## Planned: Vivomusicano Pro (freemium)
 
 The core stays free. An optional paid tier is planned for features with ongoing costs or that serve heavy users:
 

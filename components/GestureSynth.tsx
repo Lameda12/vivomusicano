@@ -287,8 +287,8 @@ export default function GestureSynth() {
 
       {!started && (
         <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-stage/85 px-4 text-center backdrop-blur-sm">
-          <h1 className="font-display text-[clamp(4rem,14vw,10rem)] leading-none">
-            VIVO<span className="text-accent">.</span>
+          <h1 className="font-display text-[clamp(2.75rem,10vw,8rem)] leading-none">
+            VIVOMUSICANO<span className="text-accent">.</span>
           </h1>
           <p className="mt-4 max-w-md font-mono text-xs leading-6 tracking-wider text-white/60">
             A GESTURE SYNTH THAT PLAYS ALONG. YOUR RIGHT HAND MOVES THE SONG FORWARD, YOUR LEFT HAND SHAPES THE SOUND.

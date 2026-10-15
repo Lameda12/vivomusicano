@@ -7,7 +7,7 @@ This project adopts the [Contributor Covenant, version 2.1](https://www.contribu
 - Be kind and assume good intent. People here range from first-time contributors to professional musicians and engineers.
 - Critique code and ideas, never people.
 - No harassment, discrimination, sexualized content, trolling, insults, doxxing, or publishing anyone's private information.
-- Do not share recordings of other people made with VIVO without their consent.
+- Do not share recordings of other people made with Vivomusicano without their consent.
 
 ## Scope
 

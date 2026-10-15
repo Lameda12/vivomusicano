@@ -55,7 +55,7 @@ export function TopBar(p: TopBarProps) {
     <header className="absolute inset-x-0 top-0 z-20 flex flex-wrap items-center gap-3 px-4 py-4 sm:px-[8vw]">
       <div className="mr-auto flex items-baseline gap-3">
         <span className="font-display text-3xl tracking-wide text-white">
-          VIVO<span className="text-accent">.</span>
+          VIVOMUSICANO<span className="text-accent">.</span>
         </span>
         {p.delegate && <span className="font-mono text-[10px] tracking-widest text-white/40">{p.delegate}</span>}
       </div>

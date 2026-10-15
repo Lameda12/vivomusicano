@@ -6,7 +6,7 @@ const display = Anton({ variable: "--font-anton", weight: "400", subsets: ["lati
 const mono = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "VIVO — gesture synth",
+  title: "Vivomusicano — gesture synth",
   description: "Play along with a singer: hand gestures advance a preloaded chord progression and shape its sound.",
 };
 

@@ -1,6 +1,6 @@
 # Third-party notices
 
-VIVO is built on these open-source projects. Each one keeps its own license.
+Vivomusicano is built on these open-source projects. Each one keeps its own license.
 
 | Component | Use | License |
 |---|---|---|

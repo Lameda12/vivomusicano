@@ -1,6 +1,8 @@
 <div align="center">
 
-# VIVO
+<img src="public/logo.png" alt="Vivomusicano logo" width="160" height="160">
+
+# Vivomusicano
 
 ### Play chords with your hands. No instrument, no install, just a webcam.
 
@@ -21,7 +23,7 @@ A gesture synth that plays along with a singer, in real time, in your browser.
 
 ---
 
-## Why VIVO
+## Why Vivomusicano
 
 - 🎤 **Built for singers.** Load a progression, then move the band forward with one hand while you sing.
 - ⚡ **Fast.** About 15–30 ms from gesture to sound, measured live (press `D`).
@@ -96,13 +98,13 @@ Tip: press `D` before recording if you want the latency numbers on screen.
 
 ## Roadmap
 
-The web app stays free and open source. Next up: MIDI out, shareable song links, more presets, and a calibration screen. Native **iOS, Android, and desktop apps** are on the way, along with an optional **VIVO Pro** tier (sound library, cloud setlists, recording and export, multiplayer jams). Full plan in [ROADMAP.md](ROADMAP.md).
+The web app stays free and open source. Next up: MIDI out, shareable song links, more presets, and a calibration screen. Native **iOS, Android, and desktop apps** are on the way, along with an optional **Vivomusicano Pro** tier (sound library, cloud setlists, recording and export, multiplayer jams). Full plan in [ROADMAP.md](ROADMAP.md).
 
 ## Contributing
 
 Contributions of every size are welcome: presets, songs, gestures, docs, translations, bug reports. Start with [CONTRIBUTING.md](CONTRIBUTING.md) and the [`good first issue`](https://github.com/Lameda12/vivomusicano/labels/good%20first%20issue) label. Please follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
-If VIVO made you smile, ⭐ the repo and share a clip. Tag it **#VIVOsynth**.
+If Vivomusicano made you smile, ⭐ the repo and share a clip. Tag it **#vivomusicano**.
 
 ## Legal
 
