@@ -31,20 +31,24 @@ type StageProps = {
   onStatus: (s: VisionStatus) => void;
   /** performance.now() of last chord advance, for the wrist pulse */
   lastAdvanceAt: RefObject<number>;
+  /** short role tags drawn next to each tracked hand */
+  labels: { right: string; left: string };
   children?: ReactNode;
 };
 
-export function Stage({ active, swapHands, onFrame, onStatus, lastAdvanceAt, children }: StageProps) {
+export function Stage({ active, swapHands, onFrame, onStatus, lastAdvanceAt, labels, children }: StageProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const onFrameRef = useRef(onFrame);
   const onStatusRef = useRef(onStatus);
   const swapRef = useRef(swapHands);
+  const labelsRef = useRef(labels);
 
   useEffect(() => {
     onFrameRef.current = onFrame;
     onStatusRef.current = onStatus;
     swapRef.current = swapHands;
+    labelsRef.current = labels;
   });
 
   useEffect(() => {
@@ -176,8 +180,14 @@ export function Stage({ active, swapHands, onFrame, onStatus, lastAdvanceAt, chi
       const { width: w, height: h } = canvas;
       ctx.clearRect(0, 0, w, h);
       const pulse = Math.max(0, 1 - (performance.now() - lastAdvanceAt.current) / 350);
-      if (right) skeleton(ctx, right, w, h, ACCENT, 3.5, pulse);
-      if (left) skeleton(ctx, left, w, h, "rgba(255,255,255,0.85)", 2.5, 0);
+      if (right) {
+        skeleton(ctx, right, w, h, ACCENT, 3.5, pulse);
+        tag(ctx, right, w, h, `R · ${labelsRef.current.right}`, ACCENT);
+      }
+      if (left) {
+        skeleton(ctx, left, w, h, "rgba(255,255,255,0.85)", 2.5, 0);
+        tag(ctx, left, w, h, `L · ${labelsRef.current.left}`, "#fff");
+      }
     }
 
     boot();
@@ -236,6 +246,25 @@ function skeleton(
     ctx.stroke();
     ctx.globalAlpha = 1;
   }
+}
+
+/** Role tag under the wrist. The canvas is CSS-mirrored, so flip text back to readable. */
+function tag(ctx: CanvasRenderingContext2D, lm: Pt[], w: number, h: number, text: string, color: string) {
+  const x = lm[0].x * w;
+  const y = Math.min(lm[0].y * h + 34, h - 10);
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(-1, 1);
+  ctx.font = "600 15px ui-monospace, SFMono-Regular, Menlo, monospace";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const pad = 6;
+  const tw = ctx.measureText(text).width;
+  ctx.fillStyle = "rgba(0,0,0,0.7)";
+  ctx.fillRect(-tw / 2 - pad, -11, tw + pad * 2, 22);
+  ctx.fillStyle = color;
+  ctx.fillText(text, 0, 1);
+  ctx.restore();
 }
 
 // ---------- chord display ----------
