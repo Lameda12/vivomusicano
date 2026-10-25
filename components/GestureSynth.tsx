@@ -20,6 +20,29 @@ type Stats = {
 };
 
 const UI_INTERVAL_MS = 50;
+const COACH_KEY = "vivo.coach.v1";
+
+/** First-run walkthrough: each step finishes when the player actually does the thing. */
+type CoachStep = "hands" | "advance" | "shape" | "done" | "off";
+type Coach = { step: CoachStep; bothSince: number | null; volMin: number; volMax: number; doneAt: number };
+
+const freshCoach = (): Coach => ({ step: "hands", bothSince: null, volMin: 1, volMax: 0, doneAt: 0 });
+
+function coachSeen(): boolean {
+  try {
+    return window.localStorage.getItem(COACH_KEY) === "done";
+  } catch {
+    return false;
+  }
+}
+
+function markCoachSeen() {
+  try {
+    window.localStorage.setItem(COACH_KEY, "done");
+  } catch {
+    // private mode: coach just shows again next visit
+  }
+}
 
 export default function GestureSynth() {
   const [songs, setSongs] = useState<Song[]>(PRESET_SONGS);
@@ -34,7 +57,9 @@ export default function GestureSynth() {
   const [debug, setDebug] = useState(false);
   const [swapHands, setSwapHands] = useState(false);
   const [editing, setEditing] = useState(false);
-  const [ui, setUi] = useState({ volume: 0.75, filter: 0.6, leftLive: false, beat: 0, held: false });
+  const [ui, setUi] = useState({
+    volume: 0.75, filter: 0.6, leftLive: false, rightLive: false, beat: 0, held: false, coach: "off" as CoachStep,
+  });
   const [stats, setStats] = useState<Stats | null>(null);
 
   const song = songs.find((s) => s.id === songId) ?? songs[0];
@@ -50,7 +75,8 @@ export default function GestureSynth() {
   const statsRef = useRef<Stats>({
     inferenceMs: 0, fps: 0, skipped: 0, processMs: null, outputMs: 0, lastSource: "—", right: null,
   });
-  const exprRef = useRef({ volume: 0.75, filter: 0.6, leftLive: false });
+  const exprRef = useRef({ volume: 0.75, filter: 0.6, leftLive: false, rightLive: false });
+  const coachRef = useRef<Coach>({ ...freshCoach(), step: "off" });
 
   useEffect(() => {
     songRef.current = song;
@@ -73,6 +99,8 @@ export default function GestureSynth() {
     lastAdvanceAt.current = now;
     statsRef.current.lastSource = source;
     statsRef.current.processMs = t0 !== undefined ? now - t0 : null;
+    const c = coachRef.current;
+    if ((source === "swipe" || source === "fist") && (c.step === "hands" || c.step === "advance")) c.step = "shape";
     setIndex(next);
     setFlashKey((k) => k + 1);
   }, []);
@@ -97,7 +125,27 @@ export default function GestureSynth() {
         engine.setVolume(e.volume);
         engine.setFilter(e.filter);
       }
-      exprRef.current = { volume: e.volume, filter: e.filter, leftLive: e.present };
+      exprRef.current = { volume: e.volume, filter: e.filter, leftLive: e.present, rightLive: r.present };
+
+      const c = coachRef.current;
+      if (c.step === "hands") {
+        if (r.present && e.present) {
+          c.bothSince ??= f.t;
+          if (f.t - c.bothSince > 600) c.step = "advance";
+        } else c.bothSince = null;
+      } else if (c.step === "advance" && modeRef.current === "auto" && r.raised) {
+        c.step = "shape";
+      } else if (c.step === "shape" && e.present) {
+        c.volMin = Math.min(c.volMin, e.volume);
+        c.volMax = Math.max(c.volMax, e.volume);
+        if (c.volMax - c.volMin > 0.3) {
+          c.step = "done";
+          c.doneAt = f.t;
+          markCoachSeen();
+        }
+      } else if (c.step === "done" && f.t - c.doneAt > 2500) {
+        c.step = "off";
+      }
 
       if (modeRef.current === "follow") {
         if (r.advance) advance(r.advance, f.t);
@@ -140,7 +188,10 @@ export default function GestureSynth() {
       if (now - lastUi > UI_INTERVAL_MS) {
         lastUi = now;
         const x = exprRef.current;
-        setUi({ volume: x.volume, filter: x.filter, leftLive: x.leftLive, beat: Math.min(1, a.phase / dur), held: a.held });
+        setUi({
+          volume: x.volume, filter: x.filter, leftLive: x.leftLive, rightLive: x.rightLive,
+          beat: Math.min(1, a.phase / dur), held: a.held, coach: coachRef.current.step,
+        });
         if (engineRef.current) statsRef.current.outputMs = engineRef.current.outputLatencyMs;
         setStats({ ...statsRef.current });
       }
@@ -157,6 +208,7 @@ export default function GestureSynth() {
       const k = e.key.toLowerCase();
       if (k === "d") setDebug((v) => !v);
       else if (k === "h") setSwapHands((v) => !v);
+      else if (e.key === "?") coachRef.current = freshCoach();
       else if (k === "m") changeMode(modeRef.current === "follow" ? "auto" : "follow");
       else if ((e.key === " " || e.key === "ArrowRight") && engineRef.current) {
         e.preventDefault();
@@ -177,6 +229,7 @@ export default function GestureSynth() {
       engine.setVolume(exprRef.current.volume);
       engine.setFilter(exprRef.current.filter);
       engineRef.current = engine;
+      if (!coachSeen()) coachRef.current = freshCoach();
       indexRef.current = 0;
       engine.playChord(song.chords[0]);
       setIndex(0);
@@ -228,7 +281,14 @@ export default function GestureSynth() {
     else setIndex(0);
   }
 
+  function skipCoach() {
+    coachRef.current.step = "off";
+    markCoachSeen();
+  }
+
   const delegate = vision.state === "ready" ? `${vision.delegate} TRACKING` : null;
+  const handLabels =
+    mode === "follow" ? { right: "FIST = NEXT", left: "UP/DOWN = VOL" } : { right: "RAISE = HOLD", left: "UP/DOWN = VOL" };
 
   return (
     <main className="relative h-dvh w-full overflow-hidden bg-stage text-white select-none">
@@ -238,6 +298,7 @@ export default function GestureSynth() {
         onFrame={onFrame}
         onStatus={setVision}
         lastAdvanceAt={lastAdvanceAt}
+        labels={handLabels}
       >
         <ChordDisplay
           chords={song.chords}
@@ -265,14 +326,19 @@ export default function GestureSynth() {
       {started && <Meters volume={ui.volume} filter={ui.filter} live={ui.leftLive} />}
 
       {started && (
-        <div className="pointer-events-none absolute bottom-20 left-4 hidden font-mono text-[11px] leading-5 tracking-wider text-white/45 sm:left-[8vw] sm:block">
-          {mode === "follow" ? (
-            <div><span className="text-accent">R</span> SWIPE DOWN / CLOSE FIST → NEXT CHORD</div>
-          ) : (
-            <div><span className="text-accent">R</span> RAISE → HOLD · LOWER → RESUME</div>
-          )}
-          <div><span className="text-white/80">L</span> HEIGHT → VOLUME · PINCH → FILTER</div>
+        <div className="pointer-events-none absolute bottom-20 left-4 font-mono text-[10px] leading-5 tracking-wider text-white/45 sm:left-[8vw] sm:text-[11px]">
+          <div>
+            <HandDot live={ui.rightLive} label="R" accent />
+            {mode === "follow" ? " OPEN HAND → FIST, OR SWIPE DOWN → NEXT CHORD" : " RAISE → HOLD · LOWER → RESUME"}
+          </div>
+          <div>
+            <HandDot live={ui.leftLive} label="L" /> HEIGHT → VOLUME · PINCH → FILTER
+          </div>
         </div>
+      )}
+
+      {started && ui.coach !== "off" && vision.state === "ready" && (
+        <CoachCard step={ui.coach} mode={mode} onSkip={skipCoach} />
       )}
 
       {vision.state === "loading" && (
@@ -302,7 +368,7 @@ export default function GestureSynth() {
             {starting ? "WARMING UP…" : "START"}
           </button>
           <p className="mt-6 font-mono text-[10px] tracking-[0.3em] text-white/35">
-            CAMERA + AUDIO · SPACE = NEXT · D = DEBUG · H = SWAP HANDS
+            CAMERA + AUDIO · SPACE = NEXT · ? = TUTORIAL · D = DEBUG · H = SWAP HANDS
           </p>
         </div>
       )}
@@ -311,6 +377,44 @@ export default function GestureSynth() {
 
       {debug && stats && <DebugOverlay stats={stats} mode={mode} swap={swapHands} delegate={delegate} />}
     </main>
+  );
+}
+
+/** Hand-in-view indicator: solid when tracked, hollow + "NOT SEEN" when not. */
+function HandDot({ live, label, accent = false }: { live: boolean; label: string; accent?: boolean }) {
+  return (
+    <span className={live ? (accent ? "text-accent" : "text-white") : "text-white/30"}>
+      {live ? "●" : "○"} {label}
+      {!live && <span className="ml-1 text-white/30">(NOT SEEN)</span>}
+    </span>
+  );
+}
+
+const COACH_COPY: Record<Exclude<CoachStep, "off">, { n: string; title: string; body: string }> = {
+  hands: { n: "1/3", title: "SHOW BOTH HANDS", body: "Hold both hands up, palms toward the camera, until each one gets a label." },
+  advance: { n: "2/3", title: "PLAY THE NEXT CHORD", body: "Right hand (orange): open it wide, then close it into a fist. A quick downward swipe works too." },
+  shape: { n: "3/3", title: "SHAPE THE SOUND", body: "Left hand (white): move it up and down for volume. Pinch thumb and index for a darker tone." },
+  done: { n: "✓", title: "YOU'VE GOT IT", body: "Now sing over it. Press ? any time to see this again." },
+};
+
+function CoachCard({ step, mode, onSkip }: { step: Exclude<CoachStep, "off">; mode: Mode; onSkip: () => void }) {
+  const copy = COACH_COPY[step];
+  const body =
+    step === "advance" && mode === "auto"
+      ? "Auto mode plays on its own. Raise your right hand (orange) above your head to hold a chord, lower it to resume."
+      : copy.body;
+  return (
+    <div className="absolute bottom-32 left-1/2 z-30 w-[min(26rem,calc(100%-2rem))] -translate-x-1/2 border-l-4 border-accent bg-black/85 px-4 py-3 font-mono sm:bottom-36">
+      <div className="flex items-baseline justify-between gap-3">
+        <span className="text-[10px] tracking-[0.3em] text-accent">{copy.n} · {copy.title}</span>
+        {step !== "done" && (
+          <button onClick={onSkip} className="text-[10px] tracking-widest text-white/50 hover:text-white">
+            SKIP
+          </button>
+        )}
+      </div>
+      <p className="mt-2 text-xs leading-5 text-white/85">{body}</p>
+    </div>
   );
 }
 
